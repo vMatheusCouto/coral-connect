@@ -1,21 +1,25 @@
+'use client'
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 
+import { useRouter } from "next/navigation"
+
 export default function Page() {
   const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
+  const router = useRouter()
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -37,7 +41,7 @@ export default function Page() {
             return (
               <div key={j} className="flex flex-1 flex-col gap-4 p-8">
                 <h1 className="text-4xl font-bold pl-4 mb-5">{title}</h1>
-                <ScrollArea className="w-full md:ml-3.5">
+                <ScrollArea className="w-full md:ml-3">
                 
                 <div className="flex w-max space-x-4">
                   {Array.from({length: 9}).map((_, i) => {
@@ -53,7 +57,7 @@ export default function Page() {
                               <h2>This paper explores the accelerating phenomenon of coral bleaching and its devastating impact on marine ecosystems.</h2>
                             </div>
                             <div className="flex gap-3">
-                            <Button className="flex-1">Acessar</Button>
+                            <Button type="button" onClick={() => router.push('/article')} className="flex-1">Acessar</Button>
                             <Button variant={"outline"} className="flex-1"/>
                             </div>
                           </CardContent>
@@ -66,7 +70,10 @@ export default function Page() {
               </div>
             )
           })}
-          
+          <div className="flex flex-row gap-2 m-4">
+            <Button variant={'outline'} type="button" onClick={() => router.push('/auth/login')} className="flex-1">Login</Button>
+            <Button variant={'outline'} type="button" onClick={() => router.push('/auth/register')} className="flex-1">Register</Button>
+          </div>
       </SidebarInset>
     </SidebarProvider>
   )

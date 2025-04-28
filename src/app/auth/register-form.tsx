@@ -1,0 +1,94 @@
+"use client"
+
+import { useForm } from "react-hook-form"
+import { Form, FormControl, FormField, FormItem, FormLabel} from '@/components/ui/form'
+import { RegisterSchema } from "../../../schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Input } from "@/components/ui/input"
+import CardWrapper from "./card-wrapper"
+
+const RegisterForm = () => {
+    const form = useForm({
+        resolver: zodResolver(RegisterSchema),
+        defaultValues: {
+            email: "",
+            name: "",
+            password: "",
+            confirmPassword: ""
+        }
+    })
+
+    const onSubmit = () => {
+        console.log("submitted")
+    }
+
+    return (
+        <CardWrapper 
+            label="Create an account"
+            title="Register"
+            backButtonHref="/"
+            backButtonLabel="Already have an account? Login here."
+        >
+            
+            <Form {...form}>
+                <div className="flex flex-col gap-4">
+                
+                    <FormField 
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="name" placeholder="name"/>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                    />
+
+                    <FormField          
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="email" placeholder="email"/>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                    />
+
+                    <FormField          
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="password" placeholder="password"/>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                    />
+
+                    <FormField          
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Confirm password</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="password" placeholder="password"/>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                    />
+                </div>
+
+            </Form>
+        </CardWrapper>
+    )
+}
+
+export default RegisterForm
