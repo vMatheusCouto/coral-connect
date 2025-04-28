@@ -1,60 +1,60 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Avatar } from "@radix-ui/react-avatar"
+import { Avatar } from "@/components/ui/avatar"
 
 export default function Page() {
+  const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+      <SidebarInset className="overflow-hidden">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 max-w[calc(100% - 256px)]">
           <SidebarTrigger className="-ml-1" />
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-8 pl-16">
-          <h1 className="text-4xl font-bold pl-4 mb-5">Artigos recentes</h1>
-          <Carousel 
-            opts={{
-              align: "start",
-            }}
-            className="w-full max-w-6xl"
-          >
-            <CarouselContent className="-ml-1">
-              {Array.from({length: 9}).map((_, i) => {
-                return (
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                    <Card className="w-[350px]">
-                      <CardHeader>
-                        <CardTitle>The Silent Collapse</CardTitle>
-                        <CardDescription>Dr. Emily Waters</CardDescription>
-                        <Avatar />
-                        <Separator />
-                      </CardHeader>
-                      <CardContent className="flex flex-col gap-5">
-                        <div>
-                          <h2>This paper explores the accelerating phenomenon of coral bleaching and its devastating impact on marine ecosystems.</h2>
-                        </div>
-                        <div className="flex gap-3">
-                        <Button className="flex-1">Acessar</Button>
-                        <Button variant={"outline"} className="flex-1"/>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                )
-              })}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
+          {titles.map((title, j) => {
+            return (
+              <div key={j} className="flex flex-1 flex-col gap-4 p-8">
+                <h1 className="text-4xl font-bold pl-4 mb-5">{title}</h1>
+                <ScrollArea className="w-full md:ml-3.5">
+                
+                <div className="flex w-max space-x-4">
+                  {Array.from({length: 9}).map((_, i) => {
+                      return (
+                        <Card key={i} className="max-w-72">
+                          <CardHeader>
+                            <CardTitle>The Silent Collapse</CardTitle>
+                            <CardDescription>Dr. Emily Waters</CardDescription>
+                            <Separator />
+                          </CardHeader>
+                          <CardContent className="flex flex-col gap-5">
+                            <div>
+                              <h2>This paper explores the accelerating phenomenon of coral bleaching and its devastating impact on marine ecosystems.</h2>
+                            </div>
+                            <div className="flex gap-3">
+                            <Button className="flex-1">Acessar</Button>
+                            <Button variant={"outline"} className="flex-1"/>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )})}
+                </div>
+
+                <ScrollBar orientation="horizontal"/>
+                </ScrollArea>
+              </div>
+            )
+          })}
+          
       </SidebarInset>
     </SidebarProvider>
   )
