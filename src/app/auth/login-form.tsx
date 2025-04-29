@@ -7,14 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
 import CardWrapper from "./card-wrapper"
 
-const RegisterForm = () => {
+const LoginForm = () => {
     const form = useForm({
         resolver: zodResolver(RegisterSchema),
         defaultValues: {
             email: "",
-            name: "",
-            password: "",
-            confirmPassword: ""
+            password: ""
         }
     })
 
@@ -24,28 +22,14 @@ const RegisterForm = () => {
 
     return (
         <CardWrapper 
-            label="Create an account"
-            title="Register"
-            backButtonHref="/auth/login"
-            backButtonLabel="Already have an account? Login here."
+            label="Sign in to your account"
+            title="Login"
+            backButtonHref="/auth/register"
+            backButtonLabel="Doens't have an account yet? Create one here."
         >
             
             <Form {...form}>
                 <div className="flex flex-col gap-4">
-                
-                    <FormField 
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input {...field} type="name" placeholder="name"/>
-                            </FormControl>
-                        </FormItem>
-                    )}
-                    />
-
                     <FormField          
                     control={form.control}
                     name="email"
@@ -71,19 +55,6 @@ const RegisterForm = () => {
                         </FormItem>
                     )}
                     />
-
-                    <FormField          
-                    control={form.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Confirm password</FormLabel>
-                            <FormControl>
-                                <Input {...field} type="password" placeholder="password"/>
-                            </FormControl>
-                        </FormItem>
-                    )}
-                    />
                 </div>
 
             </Form>
@@ -91,4 +62,4 @@ const RegisterForm = () => {
     )
 }
 
-export default RegisterForm
+export default LoginForm
