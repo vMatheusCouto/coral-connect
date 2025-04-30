@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button"
 interface CardWrapperProps {
     label: string,
     title: string,
+    button: string,
     backButtonHref: string,
     backButtonLabel: string,
     children: React.ReactNode
 }
 
-const CardWrapper = ({label, title, backButtonHref, backButtonLabel, children}: CardWrapperProps) => {
+const CardWrapper = ({label, title, button, backButtonHref, backButtonLabel, children}: CardWrapperProps) => {
     return (
-        <Card className="xl:w-1/4 md:w-1/2 shadow-md max-w-[800px] bg- border-zinc-900">
+        <Card className="xl:w-1/4 md:w-1/2 shadow-md max-w-[800px] bg-background max-sm:w-11/12 border-zinc-900">
             <CardHeader>
                 <AuthHeader label={label} title={title}/>
             </CardHeader>
@@ -21,7 +22,7 @@ const CardWrapper = ({label, title, backButtonHref, backButtonLabel, children}: 
                 {children}
             </CardContent>
             <CardFooter className="flex-col">
-                <Button type="submit" className="w-full cursor-pointer">Sign In</Button>
+                <Button type="submit" className="w-full cursor-pointer">{button}</Button>
                 <BackButton label={backButtonLabel} href={backButtonHref} />
             </CardFooter>
         </Card>

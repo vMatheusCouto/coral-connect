@@ -1,7 +1,7 @@
 "use client"
 
 import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormLabel} from '@/components/ui/form'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel} from '@/components/ui/form'
 import { RegisterSchema } from "../../../schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
@@ -24,8 +24,9 @@ const LoginForm = () => {
         <CardWrapper 
             label="Sign in to your account"
             title="Login"
+            button="Sign in"
             backButtonHref="/auth/register"
-            backButtonLabel="Doens't have an account yet? Create one here."
+            backButtonLabel="Don't have an acccount? Register."
         >
             
             <Form {...form}>
@@ -35,7 +36,7 @@ const LoginForm = () => {
                     name="email"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="">Email</FormLabel>
                             <FormControl>
                                 <Input {...field} type="email" placeholder="email"/>
                             </FormControl>
@@ -52,6 +53,7 @@ const LoginForm = () => {
                             <FormControl>
                                 <Input {...field} type="password" placeholder="password"/>
                             </FormControl>
+                            <FormDescription className="text-right">Forgot password?</FormDescription>
                         </FormItem>
                     )}
                     />

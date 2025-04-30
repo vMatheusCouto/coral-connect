@@ -57,8 +57,8 @@ export default function Page() {
                               <h2>This paper explores the accelerating phenomenon of coral bleaching and its devastating impact on marine ecosystems.</h2>
                             </div>
                             <div className="flex gap-3">
-                            <Button type="button" onClick={() => router.push('/article')} className="flex-1">Acessar</Button>
-                            <Button variant={"outline"} className="flex-1"/>
+                            <Button type="button" onClick={() => router.push('/article/id')} className="flex-1">Acess</Button>
+                            <Button variant={"outline"} className="flex-1">Download</Button>
                             </div>
                           </CardContent>
                         </Card>

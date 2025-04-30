@@ -2,9 +2,6 @@
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
@@ -16,8 +13,7 @@ import { Search } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
-export default function Page() {
-  const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
+const articleId = () => {
   const router = useRouter()
 
   return (
@@ -67,3 +63,5 @@ export default function Page() {
     </SidebarProvider>
   )
 }
+
+export default articleId
