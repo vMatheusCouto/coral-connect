@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel} from '@/components/ui/form'
-import { RegisterSchema } from "../../../schema"
+import { RegisterSchema } from "@/app/lib/definitions"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
 import CardWrapper from "./card-wrapper"

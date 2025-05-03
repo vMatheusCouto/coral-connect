@@ -1,109 +1,122 @@
-"use client"
+'use client'
 
-import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
-import { RegisterSchema } from "../../../schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Input } from "@/components/ui/input"
-import CardWrapper from "./card-wrapper"
-import { Button } from "@/components/ui/button"
-import { useFormStatus } from "react-dom"
-import { useState } from "react"
+import { useActionState } from 'react'
+import { signup } from '@/app/lib/auth'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage
+} from '@/components/ui/form'
+import CardWrapper from './card-wrapper'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { RegisterSchema } from '../lib/definitions'
+import { useRef } from 'react'
 
-import { signup } from '@/app/actions/auth'
-
-const RegisterForm = () => {
-    const [loading, setLoading] = useState(false)
-
-    const form = useForm({
-        resolver: zodResolver(RegisterSchema),
-        defaultValues: {
-            email: "",
-            name: "",
-            password: "",
-            confirmPassword: ""
-        }
-    })
-
-    const onSubmit = () => {
-        setLoading(true)
-        console.log("submitted")
-    }
-
-    const { pending } = useFormStatus()
-    return (
-        <CardWrapper 
-            label="Create an account"
-            title="Register"
-            backButtonHref="/auth/login"
-            backButtonLabel="Already have an account? Login here."
-        >
-            
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} action={signup}>
-                    <div className="flex flex-col gap-4">
-                    
-                        <FormField 
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="name" placeholder="name"/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-
-                        <FormField          
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="email" placeholder="coralconnect@email.com"/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-
-                        <FormField          
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="password" placeholder="********"/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-
-                        <FormField          
-                        control={form.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Confirm password</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="password" placeholder="********"/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                    </div>
-                    <Button type="submit" className="w-full cursor-pointer mt-10" disabled={pending}>{loading ? "Loading..." : "Create Account"}</Button>
-                </form>
-            </Form>
-        </CardWrapper>
-    )
+const initialState = {
+  errors: {},
+  message: '',
 }
 
-export default RegisterForm
+export default function RegisterForm() {
+  const [state, formAction] = useActionState(signup, initialState)
+
+  const form = useForm({
+    mode: "onChange",
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      password: "",
+      confirmPassword: ""
+    }
+  })
+
+  const formRef = useRef<HTMLFormElement>(null)
+
+  const handleManualSubmit = async () => {
+    const isValid = await form.trigger()
+    if (!isValid) {
+      console.log("Validation failed")
+      return
+    }
+    console.log("Validated form data:", form.getValues())
+    if (formRef.current) {
+      formRef.current.submit()
+    }
+  }
+
+  return (
+    <CardWrapper
+      label="Create an account"
+      title="Register"
+      backButtonHref="/auth/login"
+      backButtonLabel="Already have an account? Login here."
+    >
+      <Form {...form}>
+        <form ref={formRef} action={formAction} className="space-y-4">
+          <FormField 
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input {...field} type="text" placeholder="name" required/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Your email" type="email" required/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Password" type="password" required/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Confirm Password" type="password" required/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="button" onClick={handleManualSubmit} className="w-full mt-6">
+            Create Account
+          </Button>
+        </form>
+      </Form>
+    </CardWrapper>
+  )
+}
