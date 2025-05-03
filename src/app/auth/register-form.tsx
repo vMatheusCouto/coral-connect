@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState, useRef } from 'react'
 import { signup } from '@/app/lib/auth'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,6 @@ import CardWrapper from './card-wrapper'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { RegisterSchema } from '../lib/definitions'
-import { useRef } from 'react'
 
 const initialState = {
   errors: {},
@@ -38,19 +37,23 @@ export default function RegisterForm() {
   })
 
   const formRef = useRef<HTMLFormElement>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleManualSubmit = async () => {
     const isValid = await form.trigger()
     if (!isValid) {
-      console.log("Validation failed")
       return
     }
-    console.log("Validated form data:", form.getValues())
+    setIsLoading(true)
     if (formRef.current) {
-      formRef.current.submit()
+      if (typeof formRef.current.requestSubmit === "function") {
+        formRef.current.requestSubmit()
+      } else {
+        formRef.current.submit()
+      }
     }
   }
-
+  
   return (
     <CardWrapper
       label="Create an account"
@@ -112,8 +115,8 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
-          <Button type="button" onClick={handleManualSubmit} className="w-full mt-6">
-            Create Account
+          <Button type="button" onClick={handleManualSubmit} className="w-full mt-6" disabled={isLoading}>
+            {isLoading ? "Loading..." : "Create account"}
           </Button>
         </form>
       </Form>

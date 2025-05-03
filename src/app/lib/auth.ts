@@ -1,7 +1,9 @@
 'use server'
 import { RegisterSchema, FormState } from '@/app/lib/definitions' 
 
-import axios from 'axios';
+import { NextResponse } from 'next/server'
+
+import { supabase } from "@/app/utils/supabase"
 import bcrypt from 'bcryptjs';
 
 export async function signup(state: FormState, formData: FormData) {
@@ -16,7 +18,26 @@ export async function signup(state: FormState, formData: FormData) {
   console.log(validatedFields)
   console.log("funcionou")
 
+  if (typeof password !== 'string') {
+    throw new Error('Password must be a string');
+  }
   const hashedPassword = await bcrypt.hash(password, 10)
   console.log(`Hashed password${hashedPassword}`)
-  // Call the provider or db to create a user...
+
+  const { error } = await supabase
+    .from("auth-users")
+    .insert([
+      {
+        name: name,
+        email: email,
+        password: hashedPassword,
+      },
+    ])
+    .select();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("User created successfully");
 }

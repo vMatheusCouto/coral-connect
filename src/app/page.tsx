@@ -16,6 +16,25 @@ import { Search } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
+import { supabase } from "@/app/utils/supabase"
+
+const addForm = async () => {
+  try {
+    console.log("Add button clicked")
+    const { data, error } = await supabase
+      .from("countries")
+      .insert([{ name: "Brazil" }])
+      .select()
+    console.log("Data:", data, "Error:", error)
+    if (error) {
+      // Optionally alert the user or handle the error 
+      console.error("Error inserting:", error)
+    }
+  } catch (err) {
+    console.error("Unexpected error:", err)
+  }
+}
+
 export default function Page() {
   const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
   const router = useRouter()
@@ -74,6 +93,7 @@ export default function Page() {
             <Button variant={'outline'} type="button" onClick={() => router.push('/auth/login')} className="flex-1">Login</Button>
             <Button variant={'outline'} type="button" onClick={() => router.push('/auth/register')} className="flex-1">Register</Button>
           </div>
+          <Button onClick={() => addForm()}>Add</Button>
       </SidebarInset>
     </SidebarProvider>
   )
