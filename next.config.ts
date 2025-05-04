@@ -9,7 +9,10 @@ const nextConfig: NextConfig = {
 
 module.exports = {
   images: {
-    remotePatterns: [new URL('https://cdn.creazilla.com/**')],
+    remotePatterns: [
+      { protocol: "https", hostname: "cdn.creazilla.com", pathname: "/**" },
+      { protocol: "https", hostname: "i.ibb.co", pathname: "/**" },
+    ],
   },
 }
 
