@@ -2,9 +2,20 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRightCircleIcon, CircleParking, CirclePower, DiamondIcon, PencilIcon } from "lucide-react"
+import { ArrowRightCircleIcon, PencilIcon } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
+import Link from "next/link" 
+
+
+import { Roboto, Roboto_Serif } from "next/font/google";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+});
+
+const robotoSerif = Roboto_Serif({
+  subsets: ["latin"],
+});
 
 export default function Page() {
 
@@ -20,14 +31,23 @@ export default function Page() {
         <Button className="bg-foreground rounded-full text-background hover:bg-muted-foreground cursor-pointer">Acess now</Button>
       </header>
       <main className="bg-foreground">
-        <section id="home" className="h-screen bg-background rounded-b-2xl flex items-center p-12">
-          <div className="flex flex-col ml-24 gap-4">
-            <h1 className="text-5xl font-bold text-left">
+        
+        {/* <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+         */}
+      <section id="home" className="h-screen bg-background rounded-b-2xl flex items-center p-12">
+        <Image 
+         src="https://i.ibb.co/KjRwH6H2/background.png"
+         width={5519}
+          height={2532}
+          className="absolute left-0 right-0 bottom-0 h-8/10 top-41 rounded-2xl "
+        />
+          <div className="flex flex-col ml-24 -mt-24 gap-4 z-10">
+            <h1 className={`${robotoSerif.className} text-5xl font-semibold text-left`}>
               Join the fight to<br />
-              <span className="text-primary">Protect Coral Reefs</span><br /> 
+              <span className="text-[#64CCC5]">Protect Coral Reefs</span><br /> 
               from silent extinction.<br />
             </h1>
-            <p className="text-wrap max-w-100">
+            <p className="text-wrap max-w-120">
               Explore the latest research, connect with scientists and voices of the ocean every article brings us closer to change.
             </p>
             <Link href="auth/acess">
@@ -36,8 +56,9 @@ export default function Page() {
           </div>
         </section>
         <section id="about" className="h-screen bg-foreground flex flex-col items-center justify-center w-screen gap-4">
-          <h2 className="text-primary text-3xl font-bold">Our Services</h2>
-          <h1 className="text-background text-6xl font-black">Our Service</h1>
+          <h2 className={`${robotoSerif.className} text-[#64CCC5] text-3xl font-bold -mb-6 text-center`}>Our Platform</h2>
+          <h1 className={`${robotoSerif.className} text-background text-6xl font-bold text-wrap max-w-2xl text-center`}>Scientific tools for
+          coral reef awareness</h1>
           <div className="grid max-w-7/10 grid-cols-3 auto-cols-[minmax(0,3fr)] gap-8">
           {Array.from({length: 6}).map((_, i) => {
             return (
@@ -48,7 +69,7 @@ export default function Page() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardTitle>Research Submission</CardTitle>
+                  <CardTitle className={robotoSerif.className}>Research Submission</CardTitle>
                   <CardDescription>Submit your coral bleaching studies and help expand global scientific knowledge on reef conservation efforts.</CardDescription>
                 </CardContent>
               </Card>

@@ -8,13 +8,11 @@ import CardWrapper from "./card-wrapper"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { login } from "@/app/lib/auth"
-import { LoginSchema } from "@/app/lib/definitions" // Use your actual login schema here
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false)
 
   const form = useForm({
-    resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
       password: ""

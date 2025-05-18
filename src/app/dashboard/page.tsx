@@ -17,6 +17,7 @@ import { Search } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { supabase } from "@/app/utils/supabase"
+import { ModeToggle } from "@/components/ui/mode-toggle"
 
 const addForm = async () => {
   try {
@@ -90,6 +91,7 @@ export default function Page() {
             )
           })}
           <div className="flex flex-row gap-2 m-4">
+            <ModeToggle />
             <Button variant={'outline'} type="button" onClick={() => router.push('/auth/login')} className="flex-1">Login</Button>
             <Button variant={'outline'} type="button" onClick={() => router.push('/auth/register')} className="flex-1">Register</Button>
           </div>
