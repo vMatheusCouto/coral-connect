@@ -1,24 +1,25 @@
-import { type NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { decrypt } from './app/lib/session'
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { decrypt } from "./app/lib/session";
+
+const protectedRoutes = ["/dashboard"];
+const publicRoutes = ["/auth/acess"]
 
 export default async function middleware(req: NextRequest) {
-    const protectedRoutes = ['/article/id']
     const path = req.nextUrl.pathname
     const isProtectedRoute = protectedRoutes.includes(path)
+    const isPublicRoute = publicRoutes.includes(path)
 
-    if (isProtectedRoute) {
-        const cookie = cookies().get('section')?.value
-        const session = await decrypt(cookie)
+    const cookie = (await cookies()).get('session')?.value
+    const session = await decrypt(cookie)
 
-        if(!session?.userId) {
-            return NextResponse.redirect(new URL('/auth/register', req.nextUrl))
-        }
+    if (isProtectedRoute && !session?.userId) {
+        return NextResponse.redirect(new URL("/auth/acess", req.nextUrl))
+    }
+
+    if (isPublicRoute && session?.userId) {
+        return NextResponse.redirect(new URL("/dashboard", req.nextUrl))
     }
 
     return NextResponse.next()
-}
-
-export const config = {
-    matcher: ['/((?!api|_next/static|_next/image).*)'],
 }

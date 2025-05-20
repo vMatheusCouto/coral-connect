@@ -1,51 +1,47 @@
 import 'server-only'
 import { SignJWT, jwtVerify } from 'jose'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers';
 
-const key = new TextEncoder().encode(process.env.SECRET)
+const secretKey = process.env.JWT_SECRET_KEY;
+const encodedKey = new TextEncoder().encode(secretKey);
 
-const cookie = {
-    name: 'session',
-    options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' },
-    duration: 24 * 60 * 60 * 1000
+export async function createSession(userId: string) {
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const session = await encrypt({ userId, expiresAt });
+
+    (await cookies()).set("session", session, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+    });
 }
 
-export async function encrypt(payload) {
+export async function deleteSession() {
+    (await cookies()).delete('session')
+}
+
+type SessionPayLoad = {
+    userId: string,
+    expiresAt: Date;
+}
+
+export async function encrypt(payload: SessionPayLoad) {
     return new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime('1day')
-        .sign(key)
+        .setExpirationTime('7d')
+        .sign(encodedKey)
 }
 
-export async function decrypt(session) {
+export async function decrypt(session: string | undefined = "") {
+    if (!session) {
+        return null;
+    }
     try {
-        const { payload } = await jwtVerify(session, key, {
+        const { payload } = await jwtVerify(session, encodedKey, {
             algorithms: ['HS256'],
-        })
-        return payload
+        });
+        return payload;
     } catch (error) {
-        return null
     }
 }
-
-export async function createSession(userId) {
-    const expires = new Date(Date.now() + cookie.duration)
-    const session = await encrypt({ userId, expires })
-
-    cookies().set(cookie.name, session, { ...cookie.options, expires })
-    redirect('/dashboard')
-}
-
-export async function verifySession() {
-    const cookie = cookies().get(cookie.name)?.value
-    const session = await decrypt(payload)
-    if(!session?.userId) {
-        redirect('/auth/register')
-    }
-
-    return { userId: session.userId }
-}
-
-export async function deleteSession() {}

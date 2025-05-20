@@ -1,32 +1,43 @@
 'use server'
-import { RegisterSchema, FormState } from '@/app/lib/definitions' 
-import { eq } from 'drizzle-orm';
-import { users } from '@/app/lib/db-schema'; // Adjust the path to your schema
-import { deleteSession, createSession } from './session'; // Ensure deleteSession is implemented in session.ts
+import { FormState } from '@/app/lib/definitions' 
 import { z } from 'zod';
-
-import { NextResponse } from 'next/server'
 
 import { supabase } from "@/app/utils/supabase"
 import bcrypt from 'bcryptjs';
 
-export async function signup(state: FormState, formData: FormData) {
-  // Validate form fields
-  const validatedFields = {
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
+import { RegisterSchema, LoginSchema } from "@/app/lib/definitions"
+import { createSession, deleteSession } from './session';
+import { redirect } from 'next/navigation';
+
+export async function signup(prevState: any, formData: FormData) {
+  const result = RegisterSchema.safeParse(Object.fromEntries(formData))
+
+  if (!result.success) {
+    return {
+      errors: result.error.flatten().fieldErrors,
+    }
   }
- 
-  const { name, email, password } = validatedFields 
-  console.log(validatedFields)
-  console.log("funcionou")
+
+  const { name, email, password } = result.data 
 
   if (typeof password !== 'string') {
     throw new Error('Password must be a string');
   }
+
   const hashedPassword = await bcrypt.hash(password, 10)
   console.log(`Hashed password${hashedPassword}`)
+
+  const { data: fetchedUser, error: fetchError } = await supabase
+    .from('auth-users')
+    .select('*')
+    .eq('email', email)
+    .single()
+
+  if (fetchedUser) {
+    return {
+      errors: { finalError: ['Email already registered.'] },
+    }
+  }
 
   const { data, error } = await supabase
     .from("auth-users")
@@ -44,68 +55,51 @@ export async function signup(state: FormState, formData: FormData) {
   }
 
   const user = data[0];
-  console.log(data)
-  console.log(user)
 
-  await createSession(user.id)
-  console.log("User created successfully");
+  await createSession(data[0].id);
+  redirect('/dashboard')
 }
 
-export async function login(formData: FormData) {
-  // 1. Define your schema inside the function
-  const LoginFormSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-  })
+export async function signin(prevState: any, formData: FormData) {
 
-  // 2. Validate the form fields
-  const validatedFields = LoginFormSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+  const result = LoginSchema.safeParse(Object.fromEntries(formData))
 
-  const errorMessage = { message: 'Invalid login credentials.' }
-
-  // If validation fails, return error details
-  if (!validatedFields.success) {
+  if (!result.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: result.error.flatten().fieldErrors,
     }
   }
 
-  // 3. Query the database for the user with the given email using Supabase
+  const { email, password } = result.data 
+  const errorMessage = { message: 'Invalid login credentials.' }
+
   const { data: fetchedUser, error: fetchError } = await supabase
     .from('auth-users')
     .select('*')
-    .eq('email', validatedFields.data.email)
+    .eq('email', email)
     .single()
 
   if (fetchError || !fetchedUser) {
-    return errorMessage
+    return { errors: {errorMessage} }
   }
 
-  // 4. Compare the provided password with the stored hashed password
   const passwordMatch = await bcrypt.compare(
-    validatedFields.data.password,
+    password,
     fetchedUser.password
   )
 
-  // Delete any existing session
-  await deleteSession()
-
-  // If the password does not match, return error message
   if (!passwordMatch) {
-    return errorMessage
+    return { errors: {errorMessage} }
   }
 
-  // 5. Create a new session for the user
   const userId = fetchedUser.id.toString()
-  await createSession(userId)
+  await createSession(userId);
 
-  // Optionally, you can return the user or some success status
+  redirect('/dashboard')
   return { message: 'Login successful', user: fetchedUser }
 }
 
-export async function logout() {
-  deleteSession();
+export async function signout() {
+  await deleteSession()
+  redirect('/auth/acess')
 }

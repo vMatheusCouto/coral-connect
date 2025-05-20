@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { LogOut, Search } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
 import { supabase } from "@/app/utils/supabase"
 import { ModeToggle } from "@/components/ui/mode-toggle"
+import { signout } from "../lib/auth"
 
 const addForm = async () => {
   try {
@@ -92,10 +93,9 @@ export default function Page() {
           })}
           <div className="flex flex-row gap-2 m-4">
             <ModeToggle />
-            <Button variant={'outline'} type="button" onClick={() => router.push('/auth/login')} className="flex-1">Login</Button>
-            <Button variant={'outline'} type="button" onClick={() => router.push('/auth/register')} className="flex-1">Register</Button>
+            <Button variant={'outline'} type="button" onClick={() => signout()}><LogOut />Logout</Button>
+            <Button onClick={() => addForm()}>Add</Button>
           </div>
-          <Button onClick={() => addForm()}>Add</Button>
       </SidebarInset>
     </SidebarProvider>
   )
