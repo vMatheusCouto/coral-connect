@@ -12,7 +12,7 @@ import Image from "next/image"
 const RegisterPage = () => {
   const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
   const router = useRouter()
-  const [type, setType] = useState(false);
+  const [type, setType] = useState(true);
 
   return (
     <main className="flex flex-1 w-screen h-screen items-center justify-around absolute inset-0 bg-background bg-[radial-gradient(#141414_1px,transparent_1px)] [background-size:16px_16px]">
