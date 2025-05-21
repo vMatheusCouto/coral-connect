@@ -1,14 +1,9 @@
 'use server'
-<<<<<<< HEAD
-import { RegisterSchema, FormState } from '@/app/lib/definitions' 
-=======
 import { FormState } from '@/app/lib/definitions' 
 import { z } from 'zod';
->>>>>>> 1abe1df (feat: fully remake auth system / working)
 
 import { supabase } from "@/app/utils/supabase"
 import bcrypt from 'bcryptjs';
-import { createSession } from './session';
 
 import { RegisterSchema, LoginSchema } from "@/app/lib/definitions"
 import { createSession, deleteSession } from './session';
@@ -64,8 +59,6 @@ export async function signup(prevState: any, formData: FormData) {
   await createSession(data[0].id);
   redirect('/dashboard')
 }
-<<<<<<< HEAD
-=======
 
 export async function signin(prevState: any, formData: FormData) {
 
@@ -110,4 +103,3 @@ export async function signout() {
   await deleteSession()
   redirect('/auth/acess')
 }
->>>>>>> 1abe1df (feat: fully remake auth system / working)

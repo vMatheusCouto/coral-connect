@@ -1,100 +1,85 @@
 'use client'
 
-import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { ArrowRightCircleIcon, PencilIcon } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link" 
 
-import { useRouter } from "next/navigation"
 
-import { supabase } from "@/app/utils/supabase"
+import { Roboto, Roboto_Serif } from "next/font/google";
 
-const addForm = async () => {
-  try {
-    console.log("Add button clicked")
-    const { data, error } = await supabase
-      .from("countries")
-      .insert([{ name: "Brazil" }])
-      .select()
-    console.log("Data:", data, "Error:", error)
-    if (error) {
-      // Optionally alert the user or handle the error 
-      console.error("Error inserting:", error)
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err)
-  }
-}
+const roboto = Roboto({
+  subsets: ["latin"],
+});
+
+const robotoSerif = Roboto_Serif({
+  subsets: ["latin"],
+});
 
 export default function Page() {
-  const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
-  const router = useRouter()
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset className="overflow-hidden">
-        <header className="flex h-16 shrink-0 items-center place-content-between gap-2 border-b px-4 max-w[calc(100% - 256px)]">
-          <SidebarTrigger className="-ml-1" />
-          <div className="flex flex-row justify-center">
-            <Input className="max-w-8/12 rounded-r-none"/>
-            <Button variant="outline" size="icon" className="rounded-l-none border-l-0">
-              <Search />
-            </Button>
+    <div className="flex flex-col min-h-screen">
+      <header className="flex items-center justify-between px-12 py-8 fixed top-0 w-screen">
+        <h1>Coral Connect</h1>
+        <div className="flex flex-row gap-4">
+            <a href="#">Home</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact us</a>
+        </div>
+        <Button className="bg-foreground rounded-full text-background hover:bg-muted-foreground cursor-pointer">Acess now</Button>
+      </header>
+      <main className="bg-foreground">
+        
+        {/* <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+         */}
+      <section id="home" className="h-screen bg-background rounded-b-2xl flex items-center p-12">
+        <Image 
+         src="https://i.ibb.co/KjRwH6H2/background.png"
+         width={5519}
+          height={2532}
+          className="absolute left-0 right-0 bottom-0 h-8/10 top-41 rounded-2xl "
+        />
+          <div className="flex flex-col ml-24 -mt-24 gap-4 z-10">
+            <h1 className={`${robotoSerif.className} text-5xl font-semibold text-left`}>
+              Join the fight to<br />
+              <span className="text-[#64CCC5]">Protect Coral Reefs</span><br /> 
+              from silent extinction.<br />
+            </h1>
+            <p className="text-wrap max-w-120">
+              Explore the latest research, connect with scientists and voices of the ocean every article brings us closer to change.
+            </p>
+            <Link href="auth/acess">
+              <Button className="bg-foreground rounded-full text-background hover:bg-muted-foreground cursor-pointer max-w-30 p-2"><ArrowRightCircleIcon /> Start now</Button>
+            </Link>
           </div>
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        </header>
-          {titles.map((title, j) => {
+        </section>
+        <section id="about" className="h-screen bg-foreground flex flex-col items-center justify-center w-screen gap-4">
+          <h2 className={`${robotoSerif.className} text-[#64CCC5] text-3xl font-bold -mb-6 text-center`}>Our Platform</h2>
+          <h1 className={`${robotoSerif.className} text-background text-6xl font-bold text-wrap max-w-2xl text-center`}>Scientific tools for
+          coral reef awareness</h1>
+          <div className="grid max-w-7/10 grid-cols-3 auto-cols-[minmax(0,3fr)] gap-8">
+          {Array.from({length: 6}).map((_, i) => {
             return (
-              <div key={j} className="flex flex-1 flex-col gap-4 p-8">
-                <h1 className="text-4xl font-bold pl-4 mb-5">{title}</h1>
-                <ScrollArea className="w-full md:ml-3">
-                
-                <div className="flex w-max space-x-4">
-                  {Array.from({length: 9}).map((_, i) => {
-                      return (
-                        <Card key={i} className="max-w-72">
-                          <CardHeader>
-                            <CardTitle>The Silent Collapse</CardTitle>
-                            <CardDescription>Dr. Emily Waters</CardDescription>
-                            <Separator />
-                          </CardHeader>
-                          <CardContent className="flex flex-col gap-5">
-                            <div>
-                              <h2>This paper explores the accelerating phenomenon of coral bleaching and its devastating impact on marine ecosystems.</h2>
-                            </div>
-                            <div className="flex gap-3">
-                            <Button type="button" onClick={() => router.push('/article/id')} className="flex-1">Acess</Button>
-                            <Button variant={"outline"} className="flex-1">Download</Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )})}
-                </div>
-
-                <ScrollBar orientation="horizontal"/>
-                </ScrollArea>
-              </div>
-            )
-          })}
-          <div className="flex flex-row gap-2 m-4">
-            <Button variant={'outline'} type="button" onClick={() => router.push('/auth/login')} className="flex-1">Login</Button>
-            <Button variant={'outline'} type="button" onClick={() => router.push('/auth/register')} className="flex-1">Register</Button>
+              <Card key={i} className="bg-background flex rounded-3xl items-center justify-center max-w-90 h-60">
+                <CardHeader className="flex-1 w-full">
+                  <div className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center p-4">
+                    <PencilIcon color="black"/>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <CardTitle className={robotoSerif.className}>Research Submission</CardTitle>
+                  <CardDescription>Submit your coral bleaching studies and help expand global scientific knowledge on reef conservation efforts.</CardDescription>
+                </CardContent>
+              </Card>
+            )}
+          )}
           </div>
-          <Button onClick={() => addForm()}>Add</Button>
-      </SidebarInset>
-    </SidebarProvider>
+        </section>
+        <section id="contact" className="h-screen bg-background"></section>
+      </main>
+      <footer></footer>
+    </div>
   )
 }

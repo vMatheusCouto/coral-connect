@@ -37,7 +37,7 @@ const RegisterPage = () => {
           />
         </div>
         {
-          type == true ? <LoginForm /> : <RegisterForm setType={setType} type={type}/>
+          type == true ? <LoginForm /> : <RegisterForm/>
         }
         <Link href="/" className="absolute bottom-4 hover:opacity-70 font-stretch-extra-condensed">Coral Connect</Link>
         <Button className="absolute top-4 hover:opacity-70 text-foreground" variant={"link"} onClick={() => setType(!type)}>Alternar [temp]</Button>
