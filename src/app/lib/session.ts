@@ -20,6 +20,11 @@ export async function deleteSession() {
     (await cookies()).delete('session')
 }
 
+export async function getSession() {
+    const session = (await cookies()).get('session')?.value;
+    return await decrypt(session);
+}
+
 type SessionPayLoad = {
     userId: string,
     expiresAt: Date;

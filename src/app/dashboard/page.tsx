@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/app/utils/supabase"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import { signout } from "../lib/auth"
+import bcrypt from "bcryptjs"
 
 const addForm = async () => {
   try {
