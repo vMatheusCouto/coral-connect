@@ -7,8 +7,9 @@ import { supabase } from "@/app/utils/supabase"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Filter, PlusCircle } from "lucide-react"
+import { Filter, PlusCircle, Star } from "lucide-react"
 import Link from "next/link"
+import { getSession } from "@/app/lib/session"
 
 interface Article {
   id: string;
@@ -18,9 +19,15 @@ interface Article {
   created_by: string;
 }
 
-export function ArticleList() {
+interface ArticleListProps {
+  userIdServer: string;
+}
+
+export function ArticleList({ userIdServer }: ArticleListProps) {
   const [articles, setArticles] = useState<Article[]>([])
   const [userNames, setUserNames] = useState<Record<string, string>>({})
+  const [stars, setStars] = useState<Record<string, number>>({})
+  const [userStarred, setUserStarred] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -67,12 +74,115 @@ export function ArticleList() {
       articlesData.forEach(article => {
         if (article.created_by) {
           fetchUserName(article.created_by)
+          fetchStar(article.id)
+          fetchUserStarred(article.id)
         }
       })
     } catch (error) {
       console.error('Unexpected error:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchStar = async (articleId: string) => {
+    if (stars[articleId]) return;
+    
+    try {
+      const { data: fetchedStar, error: fetchError } = await supabase
+        .from('stars')
+        .select('*')
+        .eq('article_id', articleId)
+      
+      if (fetchError || !fetchedStar) {
+        return
+      }
+
+      const count = fetchedStar.length;
+      console.log(count)
+      
+      setStars(prev => ({
+        ...prev,
+        [articleId]: count
+      }))
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  }
+
+  const fetchUserStarred = async (articleId: string) => {
+    const userId = 31
+    
+    try {
+      const { data: fetchedUserStarred, error: fetchError } = await supabase
+        .from('stars')
+        .select('*')
+        .eq('article_id', articleId)
+        .eq('user_id', userId)
+        .single()
+      
+      if (fetchError) {
+        return
+      }
+
+      const hasStarred = fetchedUserStarred && fetchedUserStarred.length > 0
+      setUserStarred(prev => ({
+        ...prev,
+        [articleId]: hasStarred
+      }))
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  }
+
+  const handleStar = async (articleId: string) => {
+    const { data: fetchedStar, error: fetchError } = await supabase
+      .from('stars')
+      .select('*')
+      .eq('article_id', articleId)
+
+    if (fetchError || !fetchedStar) {
+      return
+    }
+
+    const userAlreadyStarred = fetchedStar.some(star => star.user_id === userIdServer);
+    
+    if (userAlreadyStarred) {
+      await supabase
+        .from('stars')
+        .delete()
+        .eq('article_id', articleId)
+        .eq('user_id', userIdServer)
+
+      setUserStarred(prev => ({
+        ...prev,
+        [articleId]: false
+      }))
+
+      setStars(prev => ({
+        ...prev,
+        [articleId]: prev[articleId] - 1
+      }))
+    }
+    else {
+      await supabase
+        .from('stars')
+        .insert([
+          {
+            user_id: userIdServer,
+            article_id: articleId
+          }
+        ])
+
+      setUserStarred(prev => ({
+        ...prev,
+        [articleId]: true
+      }))
+
+      setStars(prev => ({
+        ...prev,
+        [articleId]: prev[articleId] + 1
+      }))
     }
   }
 
@@ -133,7 +243,10 @@ export function ArticleList() {
                         </div>
                     </DialogContent>
                   </Dialog>
-                  <Button variant={"outline"} className="flex-1">Download</Button>
+                  {/* <Button variant={"outline"} className="flex-1">Download</Button> */}
+                  <div className="flex justify-between border-1 rounded-lg">
+                    <Button variant="ghost" onClick={() => handleStar(element.id)} ><Star className={userStarred[element.id] ? "fill-foreground" : ""} />{stars[element.id] || '0'}</Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

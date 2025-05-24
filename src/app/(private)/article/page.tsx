@@ -1,11 +1,17 @@
+'use server'
+
+import { getSession } from "@/app/lib/session"
 import { ArticleList } from "./lib/list"
 
-export default function Page() {
+export default async function Page() {
+
+  const session = await getSession()
+  const userId = session?.userId
 
   return (
     <div>
       <main className="px-3">
-        <ArticleList />
+        <ArticleList userIdServer={userId}/>
       </main>
     </div>
   )

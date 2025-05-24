@@ -95,11 +95,11 @@ export async function signin(prevState: any, formData: FormData) {
   const userId = fetchedUser.id.toString()
   await createSession(userId);
 
-  redirect('/main/dashboard')
+  redirect('/dashboard')
   return { message: 'Login successful', user: fetchedUser }
 }
 
 export async function signout() {
   await deleteSession()
-  redirect('/auth/acess')
+  redirect('/auth')
 }
