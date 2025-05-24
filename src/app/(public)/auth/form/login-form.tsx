@@ -4,13 +4,17 @@ import { useActionState } from 'react'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import CardWrapper from './card-wrapper'
+import CardWrapper from '../components/card-wrapper'
 import { Label } from '@/components/ui/label'
 import { useFormStatus } from 'react-dom'
-import { signin } from '../lib/auth'
+import { signin } from '../../../lib/auth'
 
+interface LoginFormProps {
+  type: boolean,
+  setType: Function,
+}
 
-export default function RegisterForm() {
+export default function LoginForm({ type, setType }: LoginFormProps) {
   const [state, loginAction] = useActionState(signin, undefined)
 
   return (
@@ -18,9 +22,11 @@ export default function RegisterForm() {
       label="Create an account"
       title="Login"
       backButtonHref="/auth/login"
-      backButtonLabel="Already have an account? Login here."
+      backButtonLabel="Don't have an account? Create here."
+      type={type}
+      setType={setType}
     >
-        <form action={loginAction} className="space-y-4">
+        <form action={loginAction} className="space-y-4 transition-all ease-in-out duration-700">
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="email" className={state?.errors && 'password' in state.errors ? "text-destructive" : undefined}>Email</Label>
             <Input name="email" type="email" aria-invalid={state?.errors && 'password' in state.errors} id="email" placeholder="Email" />

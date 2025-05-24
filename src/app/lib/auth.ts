@@ -95,7 +95,7 @@ export async function signin(prevState: any, formData: FormData) {
   const userId = fetchedUser.id.toString()
   await createSession(userId);
 
-  redirect('/dashboard')
+  redirect('/main/dashboard')
   return { message: 'Login successful', user: fetchedUser }
 }
 

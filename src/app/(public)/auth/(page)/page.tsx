@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button"
 
 import { useRouter } from "next/navigation"
-import RegisterForm from "@/app/auth/register-form"
+import RegisterForm from "@/app/(public)/auth/form/register-form"
 import Link from "next/link"
-import LoginForm from "../login-form"
+import LoginForm from "../form/login-form"
 import { useState } from "react"
 import Image from "next/image"
 
@@ -18,7 +18,7 @@ const RegisterPage = () => {
     <main className="flex flex-1 w-screen h-screen items-center justify-around absolute inset-0 bg-background bg-[radial-gradient(#141414_1px,transparent_1px)] [background-size:16px_16px]">
         <div className="align-center justify-center max-sm:hidden">
           <h1 className="font-bold text-9xl leading-28 -mt-8">Coral<br/>Connect</h1>
-          <h2 className="ml-4 mt-4 text-2xl">Share yours articles <strong>here,</strong> and connect to the <strong>world.</strong></h2>
+          <p className="ml-4 mt-4 text-2xl font-light">Share yours articles <strong>here,</strong> and connect to the <strong>world.</strong></p>
           <Image
           src="https://cdn.creazilla.com/cliparts/15591036/coral-reef-clipart-xl.png"
           
@@ -37,7 +37,7 @@ const RegisterPage = () => {
           />
         </div>
         {
-          type == true ? <LoginForm /> : <RegisterForm/>
+          type == true ? <LoginForm type={type} setType={setType}/> : <RegisterForm type={type} setType={setType}/>
         }
         <Link href="/" className="absolute bottom-4 hover:opacity-70 font-stretch-extra-condensed">Coral Connect</Link>
         <Button className="absolute top-4 hover:opacity-70 text-foreground" variant={"link"} onClick={() => setType(!type)}>Alternar [temp]</Button>
