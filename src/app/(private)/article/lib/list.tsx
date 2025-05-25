@@ -13,7 +13,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { postcomment } from "./postComment"
-import { compactDecrypt } from "jose"
 
 interface Article {
   id: string;
@@ -25,6 +24,7 @@ interface Article {
 
 interface Commentary {
   id: string;
+  created_at: Date;
   article_id: string;
   created_by: string;
   content: string;
@@ -44,7 +44,6 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
   const [userLiked, setUserLiked] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
   const [state, postAction] = useActionState(postcomment, undefined)
-  
 
   useEffect(() => {
     fetchArticles()
@@ -135,7 +134,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
         .eq('article_id', articleId)
         .eq('user_id', userIdServer)
       
-      const hasStarred = fetchedUserStarred && fetchedUserStarred.length > 0
+      const hasStarred = !!(fetchedUserStarred && fetchedUserStarred.length > 0)
     
       setUserStarred(prev => ({
         ...prev,
@@ -223,7 +222,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
         .eq('created_by', userIdServer)
         .eq('comment_id', commentId)
       
-      const hasLiked = fetchedUserLiked && fetchedUserLiked.length > 0
+      const hasLiked = !!(fetchedUserLiked && fetchedUserLiked.length > 0)
     
       setUserLiked(prev => ({
         ...prev,
@@ -313,7 +312,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-8">
-      <div className="flex flex-row justify-between items-center px-4">
+      <div className="flex flex-row justify-between items-center px-4 max-md:flex-col">
         <h1 className="text-4xl font-bold mb-5">All articles</h1>
         <div className="flex flex-row gap-2">
           <Button variant="outline" >
@@ -328,8 +327,9 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
           </Link>
         </div>
       </div>
+      <Separator className="my-4 md:hidden" />
       
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-row flex-wrap gap-4 justify-center">
         {loading ? (
           Array.from({ length: 12 }).map((_: any, index: number) => {
             return (
@@ -346,10 +346,22 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
             <div className="col-span-4 text-center py-4">No articles found</div>
         ) : (
           articles.slice().reverse().map((element: Article) => (
-            <Card key={element.id} className="max-w-72">
+            <Card key={element.id} className="w-58 max-sm:w-72 basis-auto">
               <CardHeader>
-                <CardTitle>{element.title}</CardTitle>
-                <CardDescription>{userNames[element.created_by] || 'Loading user...'}</CardDescription>
+                <div className="flex flex-row justify-between gap-4">
+                  <div className="flex flex-col">
+                    <CardTitle>{element.title}</CardTitle>
+                    <CardDescription>{userNames[element.created_by] || 'Loading user...'}</CardDescription>
+                  </div>
+                  <Avatar className="hover:scale-108 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
+                    <AvatarImage alt="@shadcn" />
+                    <AvatarFallback>
+                      {userNames[element.created_by] 
+                        ? userNames[element.created_by].slice(0, 2).toUpperCase() 
+                        : "??"}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
                 <Separator />
               </CardHeader>
               <CardContent className="flex flex-col gap-5 justify-between h-full">
@@ -364,7 +376,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
                       <Button type="button" className="flex-1">Access</Button>
                     </DialogTrigger>
                     <DialogTitle hidden className="text-2xl font-bold">Article</DialogTitle>
-                    <DialogContent className="h-8/10 flex flex-row !max-w-5xl !w-7xl">
+                    <DialogContent className="h-8/10 flex flex-row !max-w-5xl !w-7xl max-md:flex-col">
                       <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll"
                       dangerouslySetInnerHTML={{ __html: element.content }}>
                       </div>
@@ -384,6 +396,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
                               if (inputElement && inputElement.value.trim() !== "") {
                                 const newCommentary: Commentary = {
                                   id: crypto.randomUUID(),
+                                  created_at: new Date(),
                                   article_id: element.id,
                                   created_by: userIdServer,
                                   content: inputElement.value
@@ -400,16 +413,26 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
                               <p className="text-sm text-muted-foreground">No comments yet</p>
                               </div>
                               ) : commentaries[element.id]?.slice().reverse().map((commentary: Commentary) => (
-                                <Card key={element.id} className="bg-muted/50">
+                                <Card key={commentary.id} className="bg-muted/50">
                                 <CardHeader className="flex flex-row justify-between">
                                   <div className="flex flex-row gap-3">
                                     <Avatar className="hover:scale-108 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
-                                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                      <AvatarFallback>CN</AvatarFallback>
+                                    <AvatarImage alt="@shadcn" />
+                                    <AvatarFallback>
+                                      {userNames[commentary.created_by] 
+                                        ? userNames[commentary.created_by].slice(0, 2).toUpperCase() 
+                                        : "??"}
+                                    </AvatarFallback>
                                     </Avatar>
                                     <div>
                                       <CardTitle>{userNames[commentary.created_by]}</CardTitle>
-                                      <CardDescription>Biologist, MD</CardDescription>
+                                      <CardDescription>{commentary.created_at ? new Date(commentary.created_at).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'short', 
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      }) : 'Just now'}</CardDescription>
                                     </div>
                                   </div>
                                   <Button variant="ghost" onClick={() => handleLike(commentary.id)} className="hover:scale-110 transition-all duration-500 hover:cursor-pointer hover:opacity-80">

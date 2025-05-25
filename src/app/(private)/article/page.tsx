@@ -6,7 +6,7 @@ import { ArticleList } from "./lib/list"
 export default async function Page() {
 
   const session = await getSession()
-  const userId = session?.userId
+  const userId: string = session?.userId as string || ''
 
   return (
     <div>

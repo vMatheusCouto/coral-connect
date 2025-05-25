@@ -36,6 +36,7 @@ export default function Page() {
          */}
       <section id="home" className="h-screen bg-background rounded-b-2xl flex items-center p-12">
         <Image 
+        alt="Coral Connect Background"
          src="https://i.ibb.co/KjRwH6H2/background.png"
          width={5519}
           height={2532}

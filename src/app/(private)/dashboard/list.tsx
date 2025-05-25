@@ -12,7 +12,7 @@ import { Star, MessageCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-interface Article {
+/* interface Article {
   id: string;
   title: string;
   description: string;
@@ -22,10 +22,10 @@ interface Article {
 
 interface ArticleListProps {
   userIdServer: string;
-}
+} */
 
-export default function ListPage({userIdServer}: ArticleListProps) {
-  const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
+export default function ListPage(/* {userIdServer}: ArticleListProps */) {
+  /* const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
   const router = useRouter()
   
     const [articles, setArticles] = useState<Article[]>([])
@@ -183,12 +183,12 @@ export default function ListPage({userIdServer}: ArticleListProps) {
             [articleId]: (prev[articleId] || 0) + 1
           }))
         }
-      }
+      } */
 
   return (
     <div>
       <main>
-        {titles.map((title, j) => {
+        {/* {titles.map((title, j) => {
           return (
             <div key={j} className="flex flex-1 flex-col gap-4 p-8">
               <h1 className="text-4xl font-bold pl-4 mb-5">{title}</h1>
@@ -254,7 +254,8 @@ export default function ListPage({userIdServer}: ArticleListProps) {
               </ScrollArea>
             </div>
             )
-        })}
+        })} */}
+        <h1>Manutenção</h1>
       </main>
     </div>
   )

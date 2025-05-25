@@ -14,7 +14,7 @@ export default async function MainLayout({
 
 {
   const session = await getSession()
-  const userId = session?.userId
+  const userId: string = session?.userId as string || ''
 
   return (
     <div className="scroll-smooth">
