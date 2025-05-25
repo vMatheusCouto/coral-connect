@@ -6,7 +6,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { postarticle } from "@/app/(private)/article/creation/postArticle";

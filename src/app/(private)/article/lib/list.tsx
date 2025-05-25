@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { supabase } from "@/app/utils/supabase"
-import { useEffect, useState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Filter, PlusCircle, Star } from "lucide-react"
+import { Filter, Heart, PlusCircle, Rocket, Star, Upload } from "lucide-react"
 import Link from "next/link"
-import { getSession } from "@/app/lib/session"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
+import { DialogTitle } from "@radix-ui/react-dialog"
+import { postcomment } from "./postComment"
+import { compactDecrypt } from "jose"
 
 interface Article {
   id: string;
@@ -17,6 +21,13 @@ interface Article {
   description: string;
   content: string;
   created_by: string;
+}
+
+interface Commentary {
+  id: string;
+  article_id: string;
+  created_by: string;
+  content: string;
 }
 
 interface ArticleListProps {
@@ -28,7 +39,12 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
   const [userNames, setUserNames] = useState<Record<string, string>>({})
   const [stars, setStars] = useState<Record<string, number>>({})
   const [userStarred, setUserStarred] = useState<Record<string, boolean>>({})
+  const [commentaries, setCommentaries] = useState<Record<string, Array<Commentary>>>({})
+  const [likes, setLikes] = useState<Record<string, number>>({})
+  const [userLiked, setUserLiked] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
+  const [state, postAction] = useActionState(postcomment, undefined)
+  
 
   useEffect(() => {
     fetchArticles()
@@ -76,6 +92,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
           fetchUserName(article.created_by)
           fetchStar(article.id)
           fetchUserStarred(article.id)
+          fetchCommentaries(article.id)
         }
       })
     } catch (error) {
@@ -111,41 +128,36 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
   }
 
   const fetchUserStarred = async (articleId: string) => {
-    const userId = 31
-    
     try {
-      const { data: fetchedUserStarred, error: fetchError } = await supabase
+      const { data: fetchedUserStarred, error } = await supabase
         .from('stars')
         .select('*')
         .eq('article_id', articleId)
-        .eq('user_id', userId)
-        .single()
+        .eq('user_id', userIdServer)
       
-      if (fetchError) {
-        return
-      }
-
       const hasStarred = fetchedUserStarred && fetchedUserStarred.length > 0
+    
       setUserStarred(prev => ({
         ...prev,
         [articleId]: hasStarred
       }))
     } catch (error) {
-      throw new Error(error as string)
+      console.error('Error checking star status:', error)
+      setUserStarred(prev => ({
+        ...prev,
+        [articleId]: false
+      }))
     }
   }
 
   const handleStar = async (articleId: string) => {
-    const { data: fetchedStar, error: fetchError } = await supabase
+    const { data: fetchedStar } = await supabase
       .from('stars')
       .select('*')
       .eq('article_id', articleId)
+      .eq('user_id', userIdServer)
 
-    if (fetchError || !fetchedStar) {
-      return
-    }
-
-    const userAlreadyStarred = fetchedStar.some(star => star.user_id === userIdServer);
+    const userAlreadyStarred = fetchedStar && fetchedStar.length > 0
     
     if (userAlreadyStarred) {
       await supabase
@@ -161,7 +173,7 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
 
       setStars(prev => ({
         ...prev,
-        [articleId]: prev[articleId] - 1
+        [articleId]: Math.max(0, (prev[articleId] || 1) - 1)
       }))
     }
     else {
@@ -181,7 +193,120 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
 
       setStars(prev => ({
         ...prev,
-        [articleId]: prev[articleId] + 1
+        [articleId]: (prev[articleId] || 0) + 1
+      }))
+    }
+  }
+
+  const fetchCommentaries = async (articleId: string) => {
+    const { data } = await supabase
+      .from('commentaries')
+      .select('*')
+      .eq('article_id', articleId)
+
+    setCommentaries(prev => ({
+      ...prev,
+      [articleId]: data as Commentary[]
+    }))
+
+    data?.forEach(commentary => {
+      fetchLikes(commentary.id)
+      fetchUserLiked(commentary.id)
+    })
+  }
+
+  const fetchUserLiked = async (commentId: string) => {
+    try {
+      const { data: fetchedUserLiked, error } = await supabase
+        .from('likes')
+        .select('*')
+        .eq('created_by', userIdServer)
+        .eq('comment_id', commentId)
+      
+      const hasLiked = fetchedUserLiked && fetchedUserLiked.length > 0
+    
+      setUserLiked(prev => ({
+        ...prev,
+        [commentId]: hasLiked
+      }))
+    } catch (error) {
+      console.error('Error checking star status:', error)
+      setUserLiked(prev => ({
+        ...prev,
+        [commentId]: false
+      }))
+    }
+  }
+
+  const fetchLikes = async (commentId: string) => {
+    if (likes[commentId]) return;
+    
+    try {
+      const { data: fetchedLikes, error: fetchError } = await supabase
+        .from('likes')
+        .select('*')
+        .eq('comment_id', commentId)
+      
+      if (fetchError || !fetchedLikes) {
+        return
+      }
+
+      const count = fetchedLikes.length;
+      console.log(count)
+      
+      setLikes(prev => ({
+        ...prev,
+        [commentId]: count
+      }))
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  }
+
+  const handleLike = async (commentId: string) => {
+    const { data: fetchedLike } = await supabase
+      .from('likes')
+      .select('*')
+      .eq('comment_id', commentId)
+      .eq('created_by', userIdServer)
+
+    const userAlreadyLikes = fetchedLike && fetchedLike.length > 0
+    
+    if (userAlreadyLikes) {
+      await supabase
+        .from('likes')
+        .delete()
+        .eq('comment_id', commentId)
+        .eq('created_by', userIdServer)
+
+      setUserLiked(prev => ({
+        ...prev,
+        [commentId]: false
+      }))
+
+      setLikes(prev => ({
+        ...prev,
+        [commentId]: Math.max(0, (prev[commentId] || 1) - 1)
+      }))
+    }
+    else {
+      await supabase
+        .from('likes')
+        .insert([
+          {
+            created_by: userIdServer,
+            comment_id: commentId
+          }
+        ])
+
+      setUserLiked(prev => ({
+        ...prev,
+        [commentId]: true
+      }))
+
+      setLikes(prev => ({
+        ...prev,
+        [commentId]: (prev[commentId] || 0) + 1
       }))
     }
   }
@@ -233,16 +358,77 @@ export function ArticleList({ userIdServer }: ArticleListProps) {
                 </div>
                 <div className="flex gap-3">
                   
-                  <Dialog>
+                    <Dialog>
+
                     <DialogTrigger asChild>
-                    <Button type="button" className="flex-1">Acess</Button>
+                      <Button type="button" className="flex-1">Access</Button>
                     </DialogTrigger>
-                    <DialogContent className="h-8/10 flex flex-row">
-                      <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-full overflow-y-scroll"
-                        dangerouslySetInnerHTML={{ __html: element.content }}>
+                    <DialogTitle hidden className="text-2xl font-bold">Article</DialogTitle>
+                    <DialogContent className="h-8/10 flex flex-row !max-w-5xl !w-7xl">
+                      <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll"
+                      dangerouslySetInnerHTML={{ __html: element.content }}>
+                      </div>
+                      <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll">
+                        <div className="flex flex-row items-center justify-between px-4">
+                          <h1>Comentários</h1>
+                          <Button variant="ghost" onClick={() => handleStar(element.id)} ><Star className={userStarred[element.id] ? "fill-foreground" : ""} />{stars[element.id] || '0'}</Button>
                         </div>
+                        <Separator className="my-4" />
+                        <div className="flex flex-col gap-4">
+                          <form action={postAction} className="flex flex-row gap-2">
+                            <Input type="hidden" name="articleId" value={element.id} />
+                            <Input type="hidden" name="userId" value={userIdServer} />
+                            <Input name="content" id={`comment-input-${element.id}`} placeholder="Write a comment..." className="w-full" />
+                            <Button onClick={() => {
+                              const inputElement = document.getElementById(`comment-input-${element.id}`) as HTMLInputElement;
+                              if (inputElement && inputElement.value.trim() !== "") {
+                                const newCommentary: Commentary = {
+                                  id: crypto.randomUUID(),
+                                  article_id: element.id,
+                                  created_by: userIdServer,
+                                  content: inputElement.value
+                                }
+                                setCommentaries(prev => ({
+                                  ...prev,
+                                  [element.id]: [...(prev[element.id] || []), newCommentary]
+                                }))
+                              }
+                            }} size="icon" type="submit"><Rocket /></Button>
+                          </form>
+                          {commentaries[element.id]?.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center h-full">
+                              <p className="text-sm text-muted-foreground">No comments yet</p>
+                              </div>
+                              ) : commentaries[element.id]?.slice().reverse().map((commentary: Commentary) => (
+                                <Card key={element.id} className="bg-muted/50">
+                                <CardHeader className="flex flex-row justify-between">
+                                  <div className="flex flex-row gap-3">
+                                    <Avatar className="hover:scale-108 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
+                                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                      <AvatarFallback>CN</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                      <CardTitle>{userNames[commentary.created_by]}</CardTitle>
+                                      <CardDescription>Biologist, MD</CardDescription>
+                                    </div>
+                                  </div>
+                                  <Button variant="ghost" onClick={() => handleLike(commentary.id)} className="hover:scale-110 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
+                                    <Heart className={userLiked[commentary.id] ? "fill-foreground" : ""} />{likes[commentary.id] || '0'}
+                                  </Button>
+                                </CardHeader>
+                                <CardContent className="flex flex-col gap-5 justify-between h-full">
+                                  <div>
+                                    <p className="text-sm leading-relaxed">
+                                      {commentary.content}
+                                    </p>
+                                  </div>
+                                </CardContent>
+                              </Card>      
+                            ))}
+                        </div>
+                      </div>
                     </DialogContent>
-                  </Dialog>
+                    </Dialog>
                   {/* <Button variant={"outline"} className="flex-1">Download</Button> */}
                   <div className="flex justify-between border-1 rounded-lg">
                     <Button variant="ghost" onClick={() => handleStar(element.id)} ><Star className={userStarred[element.id] ? "fill-foreground" : ""} />{stars[element.id] || '0'}</Button>
