@@ -1,5 +1,6 @@
 'use client'
 
+import { articleService } from "@/app/api/services/article"
 import { supabase } from "@/app/utils/supabase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -25,6 +26,27 @@ interface ArticleListProps {
 } */
 
 export default function ListPage(/* {userIdServer}: ArticleListProps */) {
+  interface Article {
+    id: string;
+    title: string;
+    description: string;
+    content: string;
+    created_by: string;
+  }
+  
+  const [articles, setArticles] = useState<Article[]>([])
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const data = await articleService.getArticles('created_at');
+        console.log('Fetched articles:', data)
+        setArticles(data)
+      } catch (error) {
+        console.error('Unexpected error:', error)
+      }
+    }
+    fetchArticles()
+  }, [])
   /* const titles: string[] = ['Featured articles', 'Recent articles', 'All articles', 'Most viewed', 'Explore']
   const router = useRouter()
   
@@ -188,74 +210,12 @@ export default function ListPage(/* {userIdServer}: ArticleListProps */) {
   return (
     <div>
       <main>
-        {/* {titles.map((title, j) => {
-          return (
-            <div key={j} className="flex flex-1 flex-col gap-4 p-8">
-              <h1 className="text-4xl font-bold pl-4 mb-5">{title}</h1>
-              <ScrollArea className="w-full md:ml-3">
-              
-              <div className="flex w-max space-x-4">
-                {articles.map((element) => {
-                    const ArticleCard = () => {
-                        return (
-                            <Card key={element.id} className="max-w-72">
-                              <CardHeader >
-                                <div className="flex flex-row items-center justify-between">
-                                  <div className="flex flex-col">
-                                    <CardTitle>{element.title}</CardTitle>
-                                    <CardDescription>{userNames[element.created_by]}</CardDescription>
-                                  </div>
-                                  <Avatar className="hover:scale-108 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                  </Avatar>
-                                </div>
-                                
-                                <Separator className="mt-4" />
-                              </CardHeader>
-                              <CardContent className="flex flex-col gap-5 h-full justify-between">
-                                <div>
-                                  <p>{element.description}</p>
-                                  
-                                </div>
-                                <div className="flex gap-3">
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                  <Button type="button" className="flex-1">Acess</Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="h-8/10 flex flex-row">
-                                  <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-full overflow-y-scroll"
-                                      dangerouslySetInnerHTML={{ __html: element.content }}>
-                                      </div>
-                                  </DialogContent>
-                              </Dialog>                          
-                                <div className="flex justify-between border-1 rounded-lg">
-                                <Button variant="ghost" onClick={() => handleStar(element.id)} ><Star className={userStarred[element.id] ? "fill-foreground" : ""} />{stars[element.id] || '0'}</Button>
-                                <Button variant="ghost" ><MessageCircle />107</Button>
-                                  </div>
-                              </div>
-                                
-                              </CardContent>
-                            </Card>
-                          )
-                    }
-
-                    if (title === 'Featured articles' && stars[element.id] > 0) {
-                        return (
-                            <ArticleCard />
-                        )
-                    };
-                    
-                    if (title != 'Featured articles') { return (<ArticleCard />) }
-                    })}
-              </div>
-
-              <ScrollBar orientation="horizontal"/>
-              </ScrollArea>
-            </div>
-            )
-        })} */}
-        <h1>Manutenção</h1>
+        {articles.map((article) => (
+          <div key={article.id} className="p-4 border-b last:border-0">
+            <h2 className="text-lg font-semibold">{article.title}</h2>
+            <p className="text-sm text-gray-600">{article.description}</p>
+          </div>
+        ))}
       </main>
     </div>
   )

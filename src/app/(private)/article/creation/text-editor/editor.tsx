@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent, type Editor } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Heading from '@tiptap/extension-heading'
@@ -11,7 +11,6 @@ import OrderedList from '@tiptap/extension-ordered-list'
 import Paragraph from '@tiptap/extension-paragraph'
 import ImageResize from 'tiptap-extension-resize-image'
 import ToolBar from './toolbar'
-import { Button } from '@/components/ui/button'
 
   const CustomStarterKit = StarterKit.extend({
     HardBreak: {
@@ -34,7 +33,7 @@ interface TextEditorProps {
 export default function TextEditor({ content, onChange }: TextEditorProps) {
     const editor = useEditor({
         extensions: [
-            StarterKit.configure(),
+            CustomStarterKit.configure(),
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
