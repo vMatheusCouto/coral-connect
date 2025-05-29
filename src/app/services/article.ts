@@ -46,9 +46,34 @@ export const articleService = {
                 });
             }
         } catch (error) {
-            console.error('Error toggling star:', error);
             throw error;
         }
     },
 
+    toggleLike: async (commentId: string, isLiked: boolean, userId: string) => {
+        try {
+            if (isLiked) {
+                await api.delete(`/articles/comments/likes`, {
+                    data: { userId, commentId }
+                });
+            } else {
+                await api.post(`/articles/comments/likes`, {
+                    userId, commentId
+                });
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    postComment: async (articleId: string, userId: string, content: string) => {
+        try {
+            await api.post(`/articles/comments`, {
+                userId, articleId, content
+            });
+        } catch (error) {
+            console.error('Error posting comment:', error);
+            throw error;
+        }
+    },
 }

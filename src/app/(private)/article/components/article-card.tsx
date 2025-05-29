@@ -41,7 +41,7 @@ export default function ArticleCard({ element, setArticles, articles, userIdServ
                 <p>{element.description}</p>
             </div>
             <div className="flex gap-3">
-                <div className="flex justify-between border-1 rounded-lg">
+                <div className="flex flex-1 justify-between gap-2 rounded-lg">
                     <DialogComments
                         element={element}
                         setArticles={setArticles}

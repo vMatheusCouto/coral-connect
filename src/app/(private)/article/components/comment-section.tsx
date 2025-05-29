@@ -9,6 +9,7 @@ import React, { useActionState, useState } from 'react'
 import { Article } from '../types';
 import { postcomment } from '../actions/post-comment';
 import { toggleStar } from '../actions/toggle-star';
+import { LikeButton } from './card-buttons';
 
 interface DialogCommentsProps {
     element: Article,
@@ -49,12 +50,10 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
         <Separator className="my-4" />
         <div className="flex flex-col gap-4">
             <form action={postAction} className="flex flex-row gap-2">
-            <Input hidden name="articleId" value={element.id} />
-            <Input hidden name="userId" value={userIdServer} />
+            <Input hidden name="articleId" value={element.id} readOnly/>
+            <Input hidden name="userId" value={userIdServer} readOnly/>
             <Input name="content" id={`comment-input-${element.id}`} placeholder="Write a comment..." className="w-full" />
-            <Button onClick={() => {
-                }
-            } size="icon" type="submit"><Rocket /></Button>
+            <Button size="icon" type="submit"><Rocket /></Button>
             </form>
             {element.comments.count === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
@@ -81,9 +80,12 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
                         }) : 'Just now'}</CardDescription>
                     </div>
                     </div>
-                    <Button variant="ghost">
-                    <Heart />{commentary.likes}
-                    </Button>
+                    <LikeButton 
+                        commentary={commentary}
+                        setArticles={setArticles}
+                        articles={articles}
+                        userIdServer={userIdServer}
+                    />
                 </CardHeader>
                 <CardContent className="flex flex-col gap-5 justify-between h-full">
                     <div>

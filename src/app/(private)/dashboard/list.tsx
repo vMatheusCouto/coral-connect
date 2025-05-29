@@ -1,5 +1,6 @@
 'use client'
 
+import { UserContext } from "@/app/layout"
 import { articleService } from "@/app/services/article"
 import { supabase } from "@/app/utils/supabase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -11,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Star, MessageCircle } from "lucide-react"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 /* interface Article {
   id: string;

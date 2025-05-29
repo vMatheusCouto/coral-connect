@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
 /*     console.log('Fetching articles with order:', order);
  */    const session = await getSession()
     const userIdServer = session?.userId || null;
-    console.log("user: " + userIdServer)
     try {
         const { data, error } = await supabase
             .from("articles")
@@ -25,11 +24,11 @@ export async function GET(request: NextRequest) {
 
         const { data: comments } = await supabase
             .from('commentaries')
-            .select('id, created_by, article_id, content')
+            .select('id, created_by, article_id, content, created_at')
 
         const { data: likes } = await supabase
             .from('likes')
-            .select('user_id, comment_id')
+            .select('created_by, comment_id')
         
         const response = data?.map((item: any) => {
             return {
@@ -43,8 +42,8 @@ export async function GET(request: NextRequest) {
                         return {
                             ...comment,
                             created_by_name: user?.find((j: any) => j.id === comment.created_by)?.name || 'Unknown User',
-                            likes: likes?.filter((j: any) => j.comment_id === comment.id)?.length || 0,
-                            userLiked: !!likes?.find((j: any) => j.comment_id === comment.id && j.user_id == userIdServer)
+                            likes: likes?.filter((j: any) => j.comment_id == comment.id)?.length || 0,
+                            userLiked: !!likes?.find((j: any) => j.comment_id === comment.id && j.created_by == userIdServer)
                         }
                     })
                 }
@@ -54,7 +53,6 @@ export async function GET(request: NextRequest) {
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-            console.log({response});
             return NextResponse.json({ response });
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

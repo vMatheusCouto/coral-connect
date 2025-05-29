@@ -5,12 +5,12 @@ export async function POST(
     request: NextRequest
 ) {
     try {
-        const { userId, articleId } = await request.json();
+        const { userId, commentId } = await request.json();
         const { error } = await supabase
-            .from('stars')
+            .from('likes')
             .insert([{
-                article_id: articleId,
-                user_id: userId
+                comment_id: commentId,
+                created_by: userId
             }]);
 
         if (error) {
@@ -27,12 +27,12 @@ export async function DELETE(
     request: NextRequest
 ) {
     try {
-        const { userId, articleId } = await request.json();
+        const { userId, commentId } = await request.json();
         const { error } = await supabase
-            .from('stars')
+            .from('likes')
             .delete()
-            .eq('article_id', articleId)
-            .eq('user_id', userId)
+            .eq('created_by', userId)
+            .eq('comment_id', commentId)
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });

@@ -26,7 +26,6 @@ export default async function ListPage({ userIdServer }: { userIdServer: string 
 
         <Separator className="my-4 md:hidden" />
         <ArticleList variant='grid' userIdServer={userIdServer}/>
-        <ArticleList variant='row' userIdServer={userIdServer}/>
     </div>
   )
 }
