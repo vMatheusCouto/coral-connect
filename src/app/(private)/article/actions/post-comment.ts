@@ -9,7 +9,7 @@ export async function postcomment(prevState: any, formData: FormData) {
   const dataTo = Object.fromEntries(formData)
   
     const { data, error } = await supabase
-      .from("commentaries")
+      .from("comments")
       .insert([
         {
           created_by: dataTo.userId,
@@ -25,4 +25,3 @@ export async function postcomment(prevState: any, formData: FormData) {
       throw new Error(error.message);
     }
   }
-  

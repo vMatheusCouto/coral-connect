@@ -4,6 +4,7 @@ import { Separator } from '@/components/ui/separator'
 import React from 'react'
 import { Article } from '../types'
 import { StarButton } from './card-buttons'
+import { DialogComments } from './comment-section'
 
 interface ArticleCardProps {
     element: Article,
@@ -41,6 +42,12 @@ export default function ArticleCard({ element, setArticles, articles, userIdServ
             </div>
             <div className="flex gap-3">
                 <div className="flex justify-between border-1 rounded-lg">
+                    <DialogComments
+                        element={element}
+                        setArticles={setArticles}
+                        articles={articles}
+                        userIdServer={userIdServer}
+                    />
                     <StarButton 
                         element={element}
                         setArticles={setArticles}

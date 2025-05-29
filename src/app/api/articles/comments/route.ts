@@ -20,11 +20,11 @@ export async function GET(request: NextRequest) {
             .select('id, name')
 
         const { data: star } = await supabase
-            .from('comments')
+            .from('stars')
             .select('user_id, article_id')
 
         const { data: comments } = await supabase
-            .from('comments')
+            .from('commentaries')
             .select('id, created_by, article_id, content')
 
         const { data: likes } = await supabase

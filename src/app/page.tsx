@@ -34,7 +34,7 @@ export default function Page() {
         
         {/* <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
          */}
-      <section id="home" className="h-screen  bg-radial-[at_75%_50%] from-[#3a3e3e] via-[#1a1b1b] to-[#161616] to-90% rounded-b-2xl flex items-center p-12">
+      <section id="home" className="h-screen bg-background rounded-b-2xl flex items-center p-12">
         <Image 
         alt="Coral Connect Background"
          src="https://i.ibb.co/KjRwH6H2/background.png"
@@ -54,20 +54,6 @@ export default function Page() {
             <Link href="auth/acess">
               <Button className="bg-foreground rounded-full text-background hover:bg-muted-foreground cursor-pointer max-w-30 p-2"><ArrowRightCircleIcon /> Start now</Button>
             </Link>
-          </div>
-          <div className="absolute flex items-center justify-center right-40 w-110 h-110 bg-none border-1 border-[#64CCC5] rounded-full">
-            <div className=" right-40 w-80 h-80 bg-none border-1 border-[#454b4b] rounded-full" />
-          </div>
-          <div className="absolute mask-radial-at-center mask-radial-from-20% mask-radial-[50%_50%] scale-200 flex items-center justify-center right-40 w-110 h-110 bg-none bg-[#64CCC5] rounded-full opacity-10">
-            
-          </div>
-          <div className="absolute flex items-center justify-center right-40 scale-300 w-110 h-110 bg-none rounded-full">
-          <Image
-              alt="Coral Connect aaLogo"
-              src="https://i.ibb.co/4w83qJcF/Design-sem-nome-2.png"
-              width={1500}
-              height={1500}
-              />
           </div>
         </section>
         <section id="about" className="h-screen bg-foreground flex flex-col items-center justify-center w-screen gap-4">

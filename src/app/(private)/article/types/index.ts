@@ -11,7 +11,7 @@ export interface Article {
     userStarred: boolean;
     comments: {
       count: number;
-      items: {
+      items: [{
         id: string;
         created_by: string;
         article_id: string;
@@ -19,7 +19,7 @@ export interface Article {
         created_by_name: string;
         likes: number;
         userLiked: boolean;
-      }
+      }]
     }
   }
   

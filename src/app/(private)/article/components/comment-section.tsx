@@ -4,8 +4,8 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Star, Rocket, Heart } from 'lucide-react';
-import React, { useActionState } from 'react'
+import { Star, Rocket, Heart, Focus, MessageCircle } from 'lucide-react';
+import React, { useActionState, useState } from 'react'
 import { Article } from '../types';
 import { postcomment } from '../actions/post-comment';
 import { toggleStar } from '../actions/toggle-star';
@@ -19,6 +19,7 @@ interface DialogCommentsProps {
 
 export function DialogComments({ element, setArticles, articles, userIdServer }: DialogCommentsProps) {
     const [state, postAction] = useActionState(postcomment, undefined)
+    const [focus, setFocus] = useState(false);
     
   return (
     <Dialog>
@@ -28,10 +29,19 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
     </DialogTrigger>
     <DialogTitle hidden className="text-2xl font-bold">Article</DialogTitle>
     <DialogContent className="h-8/10 flex flex-row !max-w-5xl !w-7xl max-md:flex-col">
-        <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll"
-        dangerouslySetInnerHTML={{ __html: element.content }}>
+        <div className={`border-1 rounded-lg shadow-md bg-card/90 ${focus ? "w-full" : "w-5/10"} overflow-y-scroll flex flex-col transition-all duration-500 ease-in-out`}>
+        
+            <div className='flex flex-1 w-full justify-between align-center gap-4'>
+                <p className='pl-4 pt-1'>{element.title}</p>
+                <Button variant="ghost" onClick={() => setFocus(!focus)}>
+                    {focus ? 
+                        (<>Comments <MessageCircle className='top-4 right-4'/></>) : 
+                        (<>Focus <Focus className='top-4 right-4'/></>)}
+                </Button>
+            </div>    
+            <div className='p-12 overflow-y-scroll' dangerouslySetInnerHTML={{ __html: element.content }}></div>
         </div>
-        <div className="border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll">
+        <div className={` ${focus ? "hidden" : ""} border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll`}>
         <div className="flex flex-row items-center justify-between px-4">
             <h1>Comentários</h1>
             <Button variant="ghost" onClick={() => toggleStar(element, setArticles, articles, userIdServer)}><Star className={element.userStarred ? "fill-foreground" : ""}/>{element.stars}</Button>
@@ -46,24 +56,22 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
                 }
             } size="icon" type="submit"><Rocket /></Button>
             </form>
-            {element.comments?.length === 0 ? (
+            {element.comments.count === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
                 <p className="text-sm text-muted-foreground">No comments yet</p>
                 </div>
-                ) : commentaries[element.id]?.slice().reverse().map((commentary: Commentary) => (
+                ) : element.comments.items?.slice().reverse().map((commentary: any) => (
                 <Card key={commentary.id} className="bg-muted/50">
                 <CardHeader className="flex flex-row justify-between">
                     <div className="flex flex-row gap-3">
                     <Avatar className="hover:scale-108 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
                         <AvatarImage alt="@shadcn" />
                         <AvatarFallback>
-                            {userNames[commentary.created_by] 
-                            ? userNames[commentary.created_by].slice(0, 2).toUpperCase() 
-                            : "??"}
+                            
                         </AvatarFallback>
                     </Avatar>
                         <div>
-                        <CardTitle>{userNames[commentary.created_by]}</CardTitle>
+                        <CardTitle>{commentary.created_by_name}</CardTitle>
                         <CardDescription>{commentary.created_at ? new Date(commentary.created_at).toLocaleDateString('en-US', { 
                         year: 'numeric', 
                         month: 'short', 
@@ -73,8 +81,8 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
                         }) : 'Just now'}</CardDescription>
                     </div>
                     </div>
-                    <Button variant="ghost" onClick={() => handleLike(commentary.id)} className="hover:scale-110 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
-                    <Heart className={userLiked[commentary.id] ? "fill-foreground" : ""} />{likes[commentary.id] || '0'}
+                    <Button variant="ghost">
+                    <Heart />{commentary.likes}
                     </Button>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-5 justify-between h-full">
