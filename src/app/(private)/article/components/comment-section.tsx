@@ -10,6 +10,8 @@ import { Article } from '../types';
 import { postcomment } from '../actions/post-comment';
 import { toggleStar } from '../actions/toggle-star';
 import { LikeButton } from './card-buttons';
+import CommentCard from './comment-card';
+import { postCommentUI } from '../actions/post-comment-ui';
 
 interface DialogCommentsProps {
     element: Article,
@@ -42,7 +44,7 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
             </div>    
             <div className='p-12 overflow-y-scroll' dangerouslySetInnerHTML={{ __html: element.content }}></div>
         </div>
-        <div className={` ${focus ? "hidden" : ""} border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll`}>
+        <div className={` ${focus ? "hidden" : ""} border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll transition-all duration-500 ease-in-out`}>
         <div className="flex flex-row items-center justify-between px-4">
             <h1>Comentários</h1>
             <Button variant="ghost" onClick={() => toggleStar(element, setArticles, articles, userIdServer)}><Star className={element.userStarred ? "fill-foreground" : ""}/>{element.stars}</Button>
@@ -53,48 +55,25 @@ export function DialogComments({ element, setArticles, articles, userIdServer }:
             <Input hidden name="articleId" value={element.id} readOnly/>
             <Input hidden name="userId" value={userIdServer} readOnly/>
             <Input name="content" id={`comment-input-${element.id}`} placeholder="Write a comment..." className="w-full" />
-            <Button size="icon" type="submit"><Rocket /></Button>
+            <Button size="icon" type="submit"
+                onClick={() => {
+                    const input = document.getElementById(`comment-input-${element.id}`) as HTMLInputElement;
+                    const content: string = input?.value || '';
+                    postCommentUI(element, setArticles, articles, userIdServer, content);
+                }}
+            ><Rocket /></Button>
             </form>
             {element.comments.count === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
                 <p className="text-sm text-muted-foreground">No comments yet</p>
                 </div>
                 ) : element.comments.items?.slice().reverse().map((commentary: any) => (
-                <Card key={commentary.id} className="bg-muted/50">
-                <CardHeader className="flex flex-row justify-between">
-                    <div className="flex flex-row gap-3">
-                    <Avatar className="hover:scale-108 transition-all duration-500 hover:cursor-pointer hover:opacity-80">
-                        <AvatarImage alt="@shadcn" />
-                        <AvatarFallback>
-                            
-                        </AvatarFallback>
-                    </Avatar>
-                        <div>
-                        <CardTitle>{commentary.created_by_name}</CardTitle>
-                        <CardDescription>{commentary.created_at ? new Date(commentary.created_at).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                        }) : 'Just now'}</CardDescription>
-                    </div>
-                    </div>
-                    <LikeButton 
-                        commentary={commentary}
-                        setArticles={setArticles}
-                        articles={articles}
-                        userIdServer={userIdServer}
-                    />
-                </CardHeader>
-                <CardContent className="flex flex-col gap-5 justify-between h-full">
-                    <div>
-                    <p className="text-sm leading-relaxed">
-                        {commentary.content}
-                    </p>
-                    </div>
-                </CardContent>
-                </Card>      
+                <CommentCard
+                    commentary={commentary}
+                    setArticles={setArticles}
+                    articles={articles}
+                    userIdServer={userIdServer}
+                />
             ))}
         </div>
         </div>

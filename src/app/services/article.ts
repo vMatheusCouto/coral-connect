@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
-})
+    baseURL: typeof window !== 'undefined' ? '/api' : `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api`,
+    timeout: 10000,
+  })
 
 export interface Article {
   id: string;
