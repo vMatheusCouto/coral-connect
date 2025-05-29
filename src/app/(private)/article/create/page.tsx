@@ -1,14 +1,14 @@
 'use client'
 
 import { useForm } from "react-hook-form";
-import TextEditor from "./text-editor/editor";
+import TextEditor from "../components/editor/editor";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { postarticle } from "@/app/(private)/article/creation/postArticle";
+import { postarticle } from "@/app/(private)/article/create/actions";
 import { toast } from "sonner";
 
 const formSchema = z.object({

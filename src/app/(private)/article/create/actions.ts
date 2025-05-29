@@ -14,7 +14,7 @@ interface PostArticleProps {
 export async function postarticle({ title, desc, post }: PostArticleProps) {
     const user = await getSession()
   
-    const { data, error } = await supabase
+    await supabase
       .from("articles")
       .insert([
         {
@@ -26,12 +26,6 @@ export async function postarticle({ title, desc, post }: PostArticleProps) {
       ])
       .select();
 
-      console.log(data)
-
       redirect('/article')
-    if (error) {
-        console.log(error)
-      throw new Error(error?.message);
-    }
   }
   

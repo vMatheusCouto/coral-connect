@@ -1,4 +1,4 @@
-import { Article } from '@/app/api/services/article';
+import { Article } from '@/app/services/article';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

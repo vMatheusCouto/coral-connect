@@ -1,6 +1,6 @@
 'use client'
 
-import { articleService } from "@/app/api/services/article"
+import { articleService } from "@/app/services/article"
 import { supabase } from "@/app/utils/supabase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -32,6 +32,7 @@ export default function ListPage(/* {userIdServer}: ArticleListProps */) {
     description: string;
     content: string;
     created_by: string;
+    stars: string;
   }
   
   const [articles, setArticles] = useState<Article[]>([])
