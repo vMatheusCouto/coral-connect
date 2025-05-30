@@ -3,7 +3,7 @@
 import React from "react"
 import { ArticleList } from "../../../../components/organisms/article-list"
 
-export default function ListPage({userIdServer}: string) {
+export default function ListPage({userIdServer}: {userIdServer: string}) {
   const titles = [
     "Featured Articles",
     "Recent Articles",

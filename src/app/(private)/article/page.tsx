@@ -1,9 +1,7 @@
 'use server'
 
-import { Suspense } from "react"
 import ListPage from "./sections/content"
 import { getSession } from "@/lib/session"
-import Loading from "./loading"
 
 export default async function Page() {
   const session = await getSession()
