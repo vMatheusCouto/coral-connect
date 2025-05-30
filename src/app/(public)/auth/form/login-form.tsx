@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import CardWrapper from '../components/card-wrapper'
 import { Label } from '@/components/ui/label'
 import { useFormStatus } from 'react-dom'
-import { signin } from '../../../lib/auth'
+import { signin } from '../../../../lib/auth'
 
 interface LoginFormProps {
   type: boolean,

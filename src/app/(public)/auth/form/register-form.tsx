@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import CardWrapper from '../components/card-wrapper'
 import { Label } from '@/components/ui/label'
 import { useFormStatus } from 'react-dom'
-import { signup } from '../../../lib/auth'
+import { signup } from '../../../../lib/auth'
 import { useActionState } from 'react'
 
 interface RegisterFormProps {

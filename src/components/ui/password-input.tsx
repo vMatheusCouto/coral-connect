@@ -5,7 +5,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/app/lib/utils'
+import { cn } from '@/lib/utils'
 
 const PasswordInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(({ className, ...props }, ref) => {
 	const [showPassword, setShowPassword] = React.useState(false)

@@ -1,5 +1,5 @@
-import { getSession } from "@/app/lib/session";
-import { supabase } from "@/app/utils/supabase";
+import { getSession } from "@/lib/session";
+import { supabase } from "@/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

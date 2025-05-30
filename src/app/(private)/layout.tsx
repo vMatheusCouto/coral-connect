@@ -1,10 +1,10 @@
 'use server'
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { Header } from "@/components/header";
+import { AppSidebar } from "@/components/organisms/app-sidebar";
+import { Header } from "@/components/organisms/header";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getSession } from "../lib/session";
+import { getSession } from "../../lib/session";
 
 export default async function MainLayout({
   children,

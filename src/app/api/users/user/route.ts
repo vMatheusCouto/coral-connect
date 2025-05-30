@@ -1,6 +1,6 @@
-import { getSession } from "@/app/lib/session";
-import { supabase } from "@/app/utils/supabase";
-import { NextResponse } from "next/server";
+import { getSession } from "@/lib/session";
+import { supabase } from "@/utils/supabase";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
