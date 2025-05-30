@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: typeof window !== 'undefined' ? '/api' : `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api`,
+    baseURL: typeof window !== 'undefined' ? '/api' : `${process.env.NEXTAUTH_URL || 'https://coral-connect.vercel.app'}/api`,
     timeout: 10000,
   })
 
