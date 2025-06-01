@@ -18,6 +18,12 @@ export const articleService = {
         return response.data.response
     },
 
+    getUser: async (userId: string) => {
+        const params = userId ? { userId } : {};
+        const response = await api.get('/users/user', { params });
+        return response.data.data[0]
+    },
+
     toggleStar: async (articleId: string, isStarred: boolean, userId: string) => {
         try {
             if (isStarred) {
