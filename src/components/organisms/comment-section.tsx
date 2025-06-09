@@ -23,26 +23,25 @@ interface DialogCommentsProps {
 export function DialogComments({ element, setArticles, articles, userIdServer }: DialogCommentsProps) {
     const [state, postAction] = useActionState(postcomment, undefined)
     const [focus, setFocus] = useState(false);
-    
+
   return (
     <Dialog>
-    
+
     <DialogTrigger asChild>
         <Button type="button" className="flex-1">Access</Button>
     </DialogTrigger>
     <DialogTitle hidden className="text-2xl font-bold">Article</DialogTitle>
     <DialogContent className="h-8/10 flex flex-row !max-w-5xl !w-7xl max-md:flex-col">
-        <div className={`border-1 rounded-lg shadow-md bg-card/90 ${focus ? "w-full" : "w-5/10"} overflow-y-scroll flex flex-col transition-all duration-500 ease-in-out`}>
-        
-            <div className='flex flex-1 w-full justify-between align-center gap-4'>
-                <p className='pl-4 pt-1'>{element.title}</p>
-                <Button variant="ghost" onClick={() => setFocus(!focus)}>
-                    {focus ? 
-                        (<>Comments <MessageCircle className='top-4 right-4'/></>) : 
-                        (<>Focus <Focus className='top-4 right-4'/></>)}
+        <div className={`border-1 rounded-lg shadow-md bg-card/90 ${focus ? "w-full" : "w-5/10"} overflow-y-scroll flex flex-col justify-start transition-all duration-500 ease-in-out`}>
+            <div className='flex flex-1 w-full h-full bg-background/50 rounded-b-lg justify-between align-center gap-4'>
+                <p className='pl-4 my-auto text-md'>{element.title}</p>
+                <Button variant="ghost" className='text-md' onClick={() => setFocus(!focus)}>
+                    {focus ?
+                        (<><MessageCircle className='top-4 right-4'/></>) :
+                        (<><Focus className='top-4 right-4'/></>)}
                 </Button>
-            </div>    
-            <div className='p-12 overflow-y-scroll' dangerouslySetInnerHTML={{ __html: element.content }}></div>
+            </div>
+            <div className='p-8 overflow-y-scroll h-full' dangerouslySetInnerHTML={{ __html: element.content }}></div>
         </div>
         <div className={` ${focus ? "hidden" : ""} border-1 p-12 rounded-lg shadow-md bg-card/90 w-5/10 overflow-y-scroll transition-all duration-500 ease-in-out`}>
         <div className="flex flex-row items-center justify-between px-4">
