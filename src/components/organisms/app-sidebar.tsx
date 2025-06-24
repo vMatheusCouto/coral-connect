@@ -32,10 +32,6 @@ const data = {
           title: "Articles",
           url: "/article",
         },
-        {
-          title: "Test",
-          url: "/main/test",
-        }
       ],
     }
   ],
