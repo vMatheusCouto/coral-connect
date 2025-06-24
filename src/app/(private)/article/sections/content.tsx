@@ -15,7 +15,7 @@ export default async function ListPage({ userIdServer }: { userIdServer: string 
             <Filter />
             Filter
             </Button>
-            <Link href="/article/creation">
+            <Link href="/article/create">
             <Button>
                 <PlusCircle />
                 Add new article
