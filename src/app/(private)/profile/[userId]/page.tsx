@@ -7,12 +7,6 @@ import { articleService } from '@/services/article'
 import { Rocket } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
-interface ProfilePageProps {
-    params: {
-        userId: string
-    }
-}
-
 interface User {
     id: string,
     created_at: Date,
@@ -22,8 +16,8 @@ interface User {
     username: string | null,
 }
 
-export default function Profile({ params }: ProfilePageProps) {
-    const { userId } = params
+export default function Profile() {
+    const userId = "30"
     const [user, setUser] = useState<User | null>(null)
     useEffect(() => {
         const loadUser = async () => {
@@ -63,7 +57,7 @@ export default function Profile({ params }: ProfilePageProps) {
                                 <h2 className='font-light'>@{user?.username || "matheusss"}</h2>
                                 <p className="mt-4">This is my bio.</p>
                             </div>
-                            
+
                         </div>
                         <div className='flex flex-row gap-6 mt-4'>
                             <p className='font-light'>100 followers</p>
